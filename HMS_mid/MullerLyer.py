@@ -108,7 +108,7 @@ arrow_y = arrow_length * math.sin(arrow_arg * math.pi / 180)
 
 # このあたりで注視点表示の項目を用意
 fixation = visual.ImageStim(win, "bulseye.png") # 1. 画像刺激の準備
-fixation.size = 0.5 
+fixation.size = 0.5
 
 # 実験時に使う変数を用意
 trial_ID = 0
