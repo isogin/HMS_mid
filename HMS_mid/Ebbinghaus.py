@@ -62,8 +62,8 @@ mouse = event.Mouse(
 )
 
 # 中央の円の基準サイズ
-central_size_L0 = 1  # degree
-fixed_right_central_size = 1  # 右側中央円の固定サイズ
+central_size_L0 = 0.75  # degree
+fixed_right_central_size = 0.75  # 右側中央円の固定サイズ
 
 # フランカー円のサイズを固定
 left_fixed_flanker_size = 1.25  # degree
@@ -85,7 +85,7 @@ trial_num = cond_num * repeat_num
 left_flanker_distance = 3.5  # フランカー円と中央円の距離 # degree
 right_flanker_distance = 1.5
 left_flanker_positions = [(math.cos(i * pi / 3) * left_flanker_distance, math.sin(i * pi / 3) * left_flanker_distance) for i in range(6)]
-right_flanker_positions = [(math.cos(i * pi / 3) * right_flanker_distance, math.sin(i * pi / 3) * right_flanker_distance) for i in range(6)]
+right_flanker_positions = [(math.cos(i * pi / 3) * right_flanker_distance, math.sin(i * pi / 3) * right_flanker_distance) for i in range(8)]
 
 # 中央円サイズの条件をランダムに決定する
 central_size_cond_order = list(range(cond_num)) * repeat_num
@@ -111,21 +111,21 @@ for cond_index in central_size_cond_order:
     # 左側のエビングハウス錯視の描画
     for pos in left_flanker_positions:
         flanker_circle.radius = left_fixed_flanker_size
-        flanker_circle.pos = (-8 + pos[0], pos[1])
+        flanker_circle.pos = (-5 + pos[0], pos[1])
         flanker_circle.draw()
 
     central_circle.radius = left_central_size
-    central_circle.pos = (-8, 0)
+    central_circle.pos = (-5, 0)
     central_circle.draw()
 
     # 右側のエビングハウス錯視の描画
     for pos in right_flanker_positions:
         flanker_circle.radius = right_fixed_flanker_size
-        flanker_circle.pos = (8 + pos[0], pos[1])
+        flanker_circle.pos = (5 + pos[0], pos[1])
         flanker_circle.draw()
 
     central_circle.radius = fixed_right_central_size
-    central_circle.pos = (8, 0)
+    central_circle.pos = (5, 0)
     central_circle.draw()
 
     # 画面に反映
