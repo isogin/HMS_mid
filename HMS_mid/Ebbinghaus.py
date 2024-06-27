@@ -2,8 +2,7 @@
 import math
 import random
 import numpy as np
-from numpy import (sin, cos, tan, log, log10, pi, average,
-				   sqrt, std, deg2rad, rad2deg, linspace, asarray)
+from numpy import pi
 import os
 from psychopy import gui, visual, core, data, event, logging
 
@@ -31,7 +30,7 @@ if os.path.isfile(csvFile):
     core.quit()
 else:
     datafile = open(csvFile, mode="x", encoding='utf-8')
-    datafile.write("left_flanker_size,right_flanker_size,response,reaction_time\n")
+    datafile.write("left_central_size,flanker_size,response,reaction_time\n")
 
 # windowの準備
 win = visual.Window(
@@ -64,38 +63,42 @@ mouse = event.Mouse(
 
 # 中央の円の基準サイズ
 central_size_L0 = 1  # degree
+fixed_right_central_size = 1  # 右側中央円の固定サイズ
 
-# フランカー円のサイズの範囲を指定
-abs_delta = 2  # degree
-delta_size_range = [central_size_L0 - abs_delta, central_size_L0 + abs_delta]
+# フランカー円のサイズを固定
+left_fixed_flanker_size = 1.25  # degree
+right_fixed_flanker_size = 0.5  # degree
 
-# フランカー円のサイズの条件数
+
+
+# 中央円のサイズの条件数
 cond_num = 11
-size_cond = np.linspace(delta_size_range[0], delta_size_range[1], cond_num)
+central_size_cond = np.linspace(central_size_L0 - 0.5, central_size_L0 + 0.5, cond_num)
 
 # repeat_numで指定した回数だけ各条件での刺激が繰り返し提示される
 repeat_num = 2
 
-# 総試行回数. delta_sizeの条件数 * 各条件での繰り返し数
+# 総試行回数. 中央円サイズの条件数 * 各条件での繰り返し数
 trial_num = cond_num * repeat_num
 
 # フランカー円の配置
-flanker_distance = 3  # フランカー円と中央円の距離 # degree
-flanker_positions = [(cos(i * pi / 3) * flanker_distance, sin(i * pi / 3) * flanker_distance) for i in range(6)]
+left_flanker_distance = 3.5  # フランカー円と中央円の距離 # degree
+right_flanker_distance = 1.5
+left_flanker_positions = [(math.cos(i * pi / 3) * left_flanker_distance, math.sin(i * pi / 3) * left_flanker_distance) for i in range(6)]
+right_flanker_positions = [(math.cos(i * pi / 3) * right_flanker_distance, math.sin(i * pi / 3) * right_flanker_distance) for i in range(6)]
 
-# 長さの条件をランダムに決定する
-delta_size_cond_order = list(range(cond_num)) * repeat_num
-random.shuffle(delta_size_cond_order)
+# 中央円サイズの条件をランダムに決定する
+central_size_cond_order = list(range(cond_num)) * repeat_num
+random.shuffle(central_size_cond_order)
 
 # 実験時に使う変数を用意
 trial_ID = 0
 stopwatch = core.Clock()
 
-for delta_size_cond in delta_size_cond_order:
-    left_flanker_size = size_cond[delta_size_cond]
-    right_flanker_size = size_cond[delta_size_cond_order[(trial_ID + cond_num // 2) % cond_num]]
+for cond_index in central_size_cond_order:
+    left_central_size = central_size_cond[cond_index]
     print(trial_ID)
-    print(left_flanker_size, right_flanker_size)
+    print(left_central_size)
 
     # 実験内容の説明
     if trial_ID == 0:
@@ -106,22 +109,22 @@ for delta_size_cond in delta_size_cond_order:
         event.waitKeys(keyList=["space"])
 
     # 左側のエビングハウス錯視の描画
-    for pos in flanker_positions:
-        flanker_circle.radius = left_flanker_size
+    for pos in left_flanker_positions:
+        flanker_circle.radius = left_fixed_flanker_size
         flanker_circle.pos = (-8 + pos[0], pos[1])
         flanker_circle.draw()
 
-    central_circle.radius = central_size_L0
+    central_circle.radius = left_central_size
     central_circle.pos = (-8, 0)
     central_circle.draw()
 
     # 右側のエビングハウス錯視の描画
-    for pos in flanker_positions:
-        flanker_circle.radius = right_flanker_size
+    for pos in right_flanker_positions:
+        flanker_circle.radius = right_fixed_flanker_size
         flanker_circle.pos = (8 + pos[0], pos[1])
         flanker_circle.draw()
 
-    central_circle.radius = central_size_L0
+    central_circle.radius = fixed_right_central_size
     central_circle.pos = (8, 0)
     central_circle.draw()
 
@@ -147,7 +150,7 @@ for delta_size_cond in delta_size_cond_order:
     else:
         answer = "right"
 
-    data = "{},{},{},{}\n".format(left_flanker_size, right_flanker_size, answer, rt)
+    data = "{},{},{}\n".format(left_central_size, answer, rt)
     datafile.write(data)
 
     trial_ID += 1
